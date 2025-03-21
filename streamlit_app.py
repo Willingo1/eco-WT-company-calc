@@ -22,7 +22,8 @@ df = pd.DataFrame(
 )
 for col in skill_names:
     df[col]=False
-df["Unique Skills"] = df.select_dtypes(include=bool).sum(axis=1)
 
 edited_df = st.data_editor(df, num_rows="dynamic")
+edited_df["Unique Skills"] = edited_df.select_dtypes(include=bool).sum(axis=1)
+
 print()
