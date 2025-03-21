@@ -3,17 +3,28 @@ import pandas as pd
 import streamlit as st
 
 # Show the page title and description.
-st.set_page_config(page_title="Movies dataset", page_icon="🎬")
+st.set_page_config(page_title="Eco Game WT")
 st.title("🎬 Movies datasetttt")
 st.write(
     """
-    This app visualizes data from [The Movie Database (TMDB)](https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).
-    It shows which movie genre performed best at the box office over the years. Just 
-    click on the widgets below to explore!
+    This app does things
     """
 )
 
+df = pd.DataFrame(
+    [
+       {"command": "st.selectbox", "rating": 4, "is_widget": True},
+       {"command": "st.balloons", "rating": 5, "is_widget": False},
+       {"command": "st.time_input", "rating": 3, "is_widget": True},
+   ]
+)
+edited_df = st.data_editor(df)
 
+favorite_command = edited_df.loc[edited_df["rating"].idxmax()]["command"]
+st.markdown(f"Your favorite command is **{favorite_command}** 🎈")
+
+
+'''
 # Load the data from a CSV. We're caching this so it doesn't reload every time the app
 # reruns (e.g. if the user interacts with the widgets).
 @st.cache_data
@@ -53,14 +64,4 @@ st.dataframe(
 df_chart = pd.melt(
     df_reshaped.reset_index(), id_vars="year", var_name="genre", value_name="gross"
 )
-chart = (
-    alt.Chart(df_chart)
-    .mark_line()
-    .encode(
-        x=alt.X("year:N", title="Year"),
-        y=alt.Y("gross:Q", title="Gross earnings ($)"),
-        color="genre:N",
-    )
-    .properties(height=320)
-)
-st.altair_chart(chart, use_container_width=True)
+'''
