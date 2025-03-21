@@ -2,35 +2,31 @@ import altair as alt
 import pandas as pd
 import streamlit as st
 
-# Show the page title and description.
+# Streamlit page setup
 st.set_page_config(page_title="Eco Game WT")
 st.title("🎬 Movies datasetttt")
-st.write(
-    """
-    This app does things
-    """
-)
+st.write("This app does things")
 
-import streamlit as st
-import pandas as pd
 # Define skill names
-skill_names = ["mining","logging","carpentry","pottery","masonry"]
+skill_names = ["mining", "logging", "carpentry", "pottery", "masonry"]
 
-# Initialize dataframe
-df = pd.DataFrame(
-    [
-       {"Name": "Willingo", "Unique Skills":1},
-   ]
-)
-for col in skill_names:
-    df[col]=False
+# Initialize the dataframe in session state (only once)
+if "df" not in st.session_state:
+    df = pd.DataFrame([{"Name": "Willingo", "Unique Skills": 1}])
+    for col in skill_names:
+        df[col] = False
+    st.session_state.df = df #in session state it persists
 
-# Make rows addable and skills editable
-edited_df = st.data_editor(df, num_rows="dynamic")
+# Display editable DataFrame
+#edited_df is this instance of the dataframe and loads the persist3ent session state dude
+edited_df = st.data_editor(st.session_state.df, num_rows="dynamic")
 
-# Recalculate "Unique Skills"
+# Recalculate "Unique Skills" based on edited booleans
 edited_df["Unique Skills"] = edited_df.select_dtypes(include=bool).sum(axis=1)
 
-# Display edited and recalculated dataframe
-st.dataframe(edited_df)
-print()
+# Save changes back to session state
+st.session_state.df = edited_df
+
+# Display the updated DataFrame to verify changes
+# this is what is truly shown
+st.dataframe(st.session_state.df)
