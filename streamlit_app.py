@@ -1,9 +1,3 @@
-import altair as alt
-import pandas as pd
-import streamlit as st
-
-import streamlit as st
-import pandas as pd
 import streamlit as st
 import pandas as pd
 
@@ -19,17 +13,24 @@ df = pd.DataFrame(data)
 if "df" not in st.session_state:
     st.session_state.df = df
 
-# Editable DataFrame
-edited_df = st.data_editor(st.session_state.df.drop(columns=["C"]), num_rows="dynamic")
+# Editable DataFrame without column C
+edited_data = st.data_editor(
+    st.session_state.df.drop(columns=["C"]),  # Users edit only A & B
+    num_rows="dynamic",
+    key="editor"
+)
 
-# Recalculate column C based on A * B
-edited_df["C"] = edited_df["A"] * edited_df["B"]
+# Update session state DataFrame with recalculated column C
+st.session_state.df.update(edited_data)  # Update A & B
+st.session_state.df["C"] = st.session_state.df["A"] * st.session_state.df["B"]  # Recalculate C
 
-# Save updated DataFrame
-st.session_state.df = edited_df
-
-# Display the updated DataFrame interactively
-st.data_editor(st.session_state.df, num_rows="dynamic", key="updated_editor")
+# Re-display the same updated DataFrame (overwriting the previous one)
+st.data_editor(
+    st.session_state.df,  # Now includes updated C
+    num_rows="dynamic",
+    key="updated_editor",
+    disabled=["C"]  # Prevent manual editing of C
+)
 
 
 '''
