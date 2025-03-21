@@ -30,3 +30,8 @@ st.session_state.df = edited_df
 # Display the updated DataFrame to verify changes
 # this is what is truly shown
 st.dataframe(st.session_state.df)
+
+# To help debug
+st.data_editor(df, key="my_key", num_rows="dynamic")
+st.write("Here's the value in Session State:")
+st.write(st.session_state["my_key"])
