@@ -7,16 +7,6 @@ st.set_page_config(page_title="Eco Game WT")
 st.title("🎬 Movies datasetttt")
 st.write("This app does things")
 
-
-import altair as alt
-import pandas as pd
-import streamlit as st
-
-# Streamlit page setup
-st.set_page_config(page_title="Eco Game WT")
-st.title("🎬 Movies datasetttt")
-st.write("This app does things")
-
 # Define skill names
 skill_names = ["mining", "logging", "carpentry", "pottery", "masonry"]
 
