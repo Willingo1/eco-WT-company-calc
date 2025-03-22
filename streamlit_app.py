@@ -22,6 +22,6 @@ def load_data():
 
 df = load_data()
 
-st.data_editor(df, key="my_key", num_rows="dynamic")
+st.data_editor(df, key="my_key", num_rows="dynamic",on_change=load_data)
 st.write("Here's the value in Session State:")
 st.write(st.session_state["my_key"])
