@@ -2,36 +2,24 @@ import pandas as pd
 import streamlit as st
 
 
-# Define skill names
-skill_names = ["mining", "logging", "carpentry", "pottery", "masonry"]
-
-
 @st.cache_data
 def load_data():
-    """Loads the initial DataFrame."""
-    df = pd.DataFrame([{"Name": "Willingo", "Unique Skills": 0}])  # Default Unique Skills to 0
-    for col in skill_names:
-        df[col] = False  # Initialize skill columns as unchecked
+    data = {
+        "Animal": ["Lion", "Crocodile", "Elephant", "Giraffe", "Penguin"],
+        "Weight (kg)": [190, 430, 5000, 800, 4],
+        "Is Endangered": [True, True, True, False, False],
+        "Classification": ["Mammal", "Reptile", "Mammal", "Mammal", "Bird"],
+        "Average Lifespan (years)": [12, 70, 70, 25, 20],
+        "Habitat": ["Grassland", "Water", "Savannah", "Savannah", "Antarctica"],
+    }
+    df = pd.DataFrame(data)
+    df["Classification"] = df["Classification"].astype("category")
+    df["Habitat"] = df["Habitat"].astype("category")
     return df
 
 
-# Load data initially
-if "df" not in st.session_state:
-    st.session_state.df = load_data()
+df = load_data()
 
-
-# Display editable DataFrame
-edited_df = st.data_editor(st.session_state.df, key="df_editor", num_rows="dynamic")
-
-
-# Recalculate "Unique Skills" after user edits
-edited_df["Unique Skills"] = edited_df[skill_names].sum(axis=1)
-
-
-# Save the updated DataFrame back to session state
-st.session_state.df = edited_df
-
-
-# Debugging output
+st.data_editor(df, key="my_key", num_rows="dynamic")
 st.write("Here's the value in Session State:")
-st.write(st.session_state.df)
+st.write(st.session_state["my_key"])
