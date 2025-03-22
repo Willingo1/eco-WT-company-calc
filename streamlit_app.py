@@ -5,6 +5,7 @@ import streamlit as st
 @st.cache_data
 def load_data():
     data = {
+        "Value": [0,0,0,0,0],
         "Animal": ["Lion", "Crocodile", "Elephant", "Giraffe", "Penguin"],
         "Weight (kg)": [190, 430, 5000, 800, 4],
         "Is Endangered": [True, True, True, False, False],
@@ -15,6 +16,7 @@ def load_data():
     df = pd.DataFrame(data)
     df["Classification"] = df["Classification"].astype("category")
     df["Habitat"] = df["Habitat"].astype("category")
+    df["Value"] = df["Weight (kg)"]*df["Average Lifespan (years)"]
     return df
 
 
