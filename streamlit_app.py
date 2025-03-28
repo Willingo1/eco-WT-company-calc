@@ -11,9 +11,10 @@ st.title("Eco Game WHite Tiger Company Tax Calculator")
 st.info("Made by Willingo#3404. DM on Discord for feedback,advice, or bugs")
 # Inspiration from https://discuss.streamlit.io/t/trigger-function-from-an-st-data-editor/57610/4
 # Not sure if there is a more pythonic way to accomplish this, but it works so whatever
-st.subheader("Override Manual Tax (Likely not needed)")
-compound_tax = st.number_input("Compounding Tax Per Skill 20% is accurate as of March 21st 2025. Likely won't change",value=0.20)
 
+#st.subheader("Override Manual Tax (Likely not needed)")
+#compound_tax = st.number_input("Compounding Tax Per Skill 20% is accurate as of March 21st 2025. Likely won't change",value=0.20)
+compound_tax = 0.20
 
 
 # Handle Skill names
@@ -32,14 +33,14 @@ skill_names = ["Smelting","Blacksmith","Advanced Smelting",
 if 'df' not in st.session_state:
     # Define initial data
     data = {
-        'Names': ['A', 'B', 'C'],
-        'Unique Skills': [0, 0, 0],
+        'Names': ['A', 'B'],
+        'Unique Skills': [0, 0],
     }
     for skill in skill_names:
         data[skill]= [False]*len(data['Names'])
     st.session_state.df = pd.DataFrame(data)
 
-st.subheader("Add sorting skill capabilities")
+st.subheader("Add sorting skill capabilities (Purely for convenience)")
 ## Give sorting skill capabilities
 # Store sorting option in session state
 if "sort_option" not in st.session_state:
@@ -120,9 +121,10 @@ def tax_calc(val):
 # Streamlit UI
 def main():
     #st.session_state.df[skill_names]= st.session_state.df[skill_names].apply(sorted)
-    st.subheader("Select Skills For Each Company Mate")
-    st.info("You can add new players by hovering below the last name and clicking '+' or delete a player by selecting the checkmark to the left of a name and then in top right of dataframe, press the trashcan")
-    st.info("Note: It doesn't really matter which skills are chosen, just the number of unique skills and whether players choose the same ones. There is no bias toward any certain skills")
+    st.subheader("Add Employees & Select Skills")
+    st.info("You can add new players by hovering below the last name and clicking '+' or delete a player by selecting the checkmark to the left of a name and then in top right of dataframe, press the trashcan",icon="ℹ️")
+    st.info("Make sure you add all employees. Having 2 or having more than 2 matters for the 2 star exemption",icon="ℹ️")
+    st.info("Note: It doesn't really matter which skills are chosen, just the number of unique skills and whether players choose the same ones. There is no bias toward any certain skills",icon="ℹ️")
     st.data_editor(st.session_state.df, num_rows="dynamic",hide_index=True, on_change=update_dataframe, key='skill_table')
     #st.write(st.session_state)
 
@@ -131,16 +133,23 @@ def main():
     max_unique_skills = st.session_state.df["Unique Skills"].max() if not st.session_state.df.empty else 0
     # Find the number of unique skills across all rows
     total_unique_skills = st.session_state.df[skill_names].any(axis=0).sum() if not st.session_state.df.empty else 0
-
-    if total_unique_skills ==2:
+    num_employees = st.session_state.df["Names"].nunique()
+    if total_unique_skills ==2 and num_employees == 2:
         st.info(f"Only 2 unique skills in entire company, so due to 2-star exemption, you have no extra tax")
-        st.info("You will have 0%, NO tax applied")
         st.warning(f"""Be careful. You should 'meet up' in skills on the next level, since this is an exemption\nFor example, if player B chooses the skill of player A
         but player A chooses another new skill, you will have a {tax_calc(1)}% tax. And if you both choose two new skills, there will be 4 unique skills and you will have a {tax_calc(2)})% tax) """,icon="⚠️")
+        st.success("You will have 0%, NO tax applied",icon="💡")
+
+    # could refactor this later if I care
+    elif total_unique_skills==2 and num_employees > 2:
+        st.warning(f"While you only have 2 unique skills in the entire company, you do not have the 2-star exemption, because you have {num_employees} employees, and it only applies to 2-player companies",icon="⚠️")
+        st.info(f"Your most skilled player has:{max_unique_skills} total skills",icon="ℹ️")
+        st.info(f"Your total number of unique skills is: {total_unique_skills}",icon="ℹ️")
+        st.success(f"You will have a {round(100*(1-(1-compound_tax)**(total_unique_skills-max_unique_skills)),0)}% tax applied before other taxes",icon="💡")
     else:
-        st.info(f"Your most skilled player has:{max_unique_skills} total skills")
-        st.info(f"Your total number of unique skills is: {total_unique_skills}")
-        st.info(f"You will have a {round(100*(1-(1-compound_tax)**(total_unique_skills-max_unique_skills)),0)}% tax applied before other taxes")
+        st.info(f"Your most skilled player has:{max_unique_skills} total skills",icon="ℹ️")
+        st.info(f"Your total number of unique skills is: {total_unique_skills}",icon="ℹ️")
+        st.success(f"You will have a {round(100*(1-(1-compound_tax)**(total_unique_skills-max_unique_skills)),0)}% tax applied before other taxes",icon="💡")
     #st.write(type(st.session_state.df))
 if __name__ == '__main__':
     main()
